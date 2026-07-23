@@ -25,7 +25,37 @@ const addUser = new GraphQLObjectType({
                     age : args.age
                 }
                 users.push(user)
+                console.log(users)
                 return user
+            }
+             
+        },
+        updateUser: {
+            type : userType,
+            args: {id: {type: GraphQLString},name:{type: GraphQLString },age :{type: GraphQLInt}},
+            resolve(parent, args){
+                const user = users.find( user => user.id === args.id);
+                if(user){
+                    user.name = args.name || user.name,
+                    user.age = args.age || user.age
+
+                    console.log(users)
+                    return user
+                }
+                throw new Error("user not found")
+            }
+             
+        },
+        deleteUser: {
+            type : userType,
+            args: {id: {type: GraphQLString}},
+            resolve(parent, args){
+                const index = users.findIndex( user => user.id === args.id);
+                if(index === -1){
+                    throw new Error("user not found")
+                }
+                console.log(users)
+                return users.splice(index,1)[0]
             }
              
         }
@@ -39,6 +69,7 @@ const RootQuery = new GraphQLObjectType({
             type : userType,
             args : {id:{type : GraphQLString}},
             resolve(parent,args){
+                console.log(users)
                 return users.find(user => user.id === args.id)
             }
         },
